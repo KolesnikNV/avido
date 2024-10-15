@@ -1,0 +1,81 @@
+version: '3.9'
+services:
+  elasticsearch:
+    image: elasticsearch:7.9.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.monitoring.collection.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m -Dhttp.headers.default=X-Found-Cluster:MyCluster,X-Found-Index:my_index
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    depends_on:
+      - db
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+
+  db:
+    container_name: "db"
+    image: postgres:15.0-alpine
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgres/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    networks:
+      - network
+
+
+  backend:
+    container_name: "backend"
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    command:
+      - "./docker-entrypoint.sh"
+    depends_on:
+      - db
+    networks:
+      - network
+
+  celery:
+    container_name: "celery"
+    build: .
+    env_file:
+      - .env
+    restart: always
+    command: celery -A avido worker -l info
+    depends_on:
+      - db
+    networks:
+      - network
+
+  redis:
+    image: redis
+    container_name: "redis"
+    depends_on:
+      - db
+    ports:
+      - "6379:6379"
+    networks:
+      - network
+
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  pg_data:
+  elasticsearch-data:
+  avido:

@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "avido"
+version = "0.1.0"
+description = ""
+authors = ["nikitakolesnik <nikita.kolesnik@simbirsoft.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.4"
+python-dotenv = "^1.0.1"
+djangorestframework = "^3.15.1"
+isort = "^5.13.2"
+black = "^24.3.0"
+gunicorn = "^21.2.0"
+dj-database-url = "^2.1.0"
+psycopg2-binary = "^2.9.9"
+djoser = "^2.2.2"
+celery = "^5.3.6"
+redis = "^5.0.3"
+django-rest-auth = "^0.9.5"
+pytest = "^8.1.1"
+pillow = "^10.3.0"
+transliterate = "^1.10.2"
+django-filter = "^24.2"
+elasticsearch = "7.17.6"
+faker = "^24.9.0"
+pytest-django = "^4.8.0"
+drf-extra-fields = "^3.7.0"
+
+[tool.black]
+line-length = 80
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "avido.settings"
+python_files = "tests_*.py"
